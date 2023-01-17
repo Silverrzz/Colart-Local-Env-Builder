@@ -1,0 +1,8 @@
+{
+    "public": {
+        "SAFE_MODE": false,
+        "INSTALL_WSL": true,
+        "USERNAME": "test",
+        "PASSWORD": "test"
+    }
+}
