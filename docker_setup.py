@@ -1,6 +1,6 @@
 """
 
-This file contains the functionality to install Windows Subsystem for Linux
+This file contains the functionality to install Docker Desktop and all the containers needed.
 Do not alter this file unless necessary.
 Configuration to enable, disable or edit the functionality of this program can be accessed via the CLI or Application.
 
@@ -8,7 +8,7 @@ Configuration to enable, disable or edit the functionality of this program can b
 
 #Local config
 
-_SCRIPT_NAME = "wsl-setup"
+_SCRIPT_NAME = "docker_setup"
 _SAFE_MSG = "(Safe mode is enabled)"
 
 #Package imports
@@ -34,9 +34,8 @@ if SAFE_MODE:
 
 #Script config
 
-SCRIPT_ENABLED = Interface.get_config().get_value("INSTALL_WSL")
-USR_USERNAME = Interface.get_config().get_value("USERNAME")
-USR_PASSWORD = Interface.get_config().get_value("PASSWORD")
+SCRIPT_ENABLED = Interface.get_config().get_value("INSTALL_DOCKER")
+DOCKER_DRIVE = input("Path to install docker desktop: ")
 
 ############################################################################################################################################
 #                                                                                                                                          #
@@ -44,10 +43,10 @@ USR_PASSWORD = Interface.get_config().get_value("PASSWORD")
 #                                                                                                                                          #
 ############################################################################################################################################
 
-Interface.output(States.OK, "Starting WSL Setup!")
-Interface.output(States.INFO, "Installing WSL2")
+def script():
 
-message, code = Interface.system_command("wsl --install")
-
-if code is None:
-    Interface.request_restart(1)
+    Interface.output(States.OK, "Starting Docker setup!")
+    Interface.output(States.INFO, "Downloading docker desktop.")
+    Interface.system_command(f"curl https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe --output {DOCKER_DRIVE}/docker.exe")
+    Interface.output(States.INFO, "Docker desktop downloaded, running installer.")
+    Interface.system_command(f"{DOCKER_DRIVE}/docker.exe")

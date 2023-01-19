@@ -20,8 +20,9 @@ import subprocess
 
 class Config:
     def __init__(self, private):
-
-        self.json = self._load_config(private)
+        self.private = private
+        self._raw = self._load_config()
+        self.json = self._raw["public" if not private else "private"]
 
     def get_value(self, v_name):
         return self.json[v_name]
@@ -29,6 +30,7 @@ class Config:
     def set_value(self, v_name, v_content):
         try:
             self.json[v_name] = v_content
+            self._raw["public" if not self.private else "private"][v_name] = v_content
             if (self._save_config()):
                 return True
             else:
@@ -36,15 +38,15 @@ class Config:
         except Exception:
             return False
 
-    def _load_config(self, private):
+    def _load_config(self):
         with open("config.json", "r") as f:
-            config = json.loads(f.read())["public" if not private else "private"]
+            config = json.loads(f.read())
         return config
 
     def _save_config(self):
         try:
             with open("config.json", "w+") as f:
-                f.write(json.dumps(self.json, indent=4))
+                f.write(json.dumps(self._raw, indent=4))
             return True
         except Exception:
             return False
@@ -120,6 +122,13 @@ class Interface:
         result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         return bytes(result.stdout.read()).decode("utf-8"), result.returncode
 
-    def request_restart(step_code):
+    def increment_step():
+        Interface.get_config(private=True).set_value("STEP_CODE", Interface.get_config(private=True).get_value("STEP_CODE") + 1)
+
+    def reset_step():
+        Interface.get_config(private=True).set_value("STEP_CODE", 0)
+
+    def request_restart():
         Interface.output(States.IMPORTANT, "A system restart is required to continue!")
-        Interface.output(States.INFO, f"The process is currently on step {step_code}. If you have come across this restart before there may be a problem.")
+        Interface.output(States.INFO, f"The process is currently on step {Interface.get_config(private=True).get_value('STEP_CODE')}. If you have come across this restart before there may be a problem.")
+        sys.exit()

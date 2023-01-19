@@ -2,7 +2,9 @@
     "public": {
         "SAFE_MODE": false,
         "INSTALL_WSL": true,
-        "USERNAME": "test",
-        "PASSWORD": "test"
+        "INSTALL_DOCKER": true
+    },
+    "private": {
+        "STEP_CODE": 0
     }
 }
