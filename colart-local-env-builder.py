@@ -117,7 +117,7 @@ class Interface:
 
     def system_command(cmd):
         result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        return bytes(result.stdout.read()).decode("utf-8"), result.returncode
+        print(result.stdout.read().decode("utf-8")), result.returncode
 
     def increment_step():
         Interface.get_config(private=True).set_value("STEP_CODE", Interface.get_config(private=True).get_value("STEP_CODE") + 1)
@@ -168,7 +168,7 @@ try:
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
     Interface.system_command(f"wsl mv {install_location} spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
     Interface.output(States.INFO, "Creating docker containers")
-    print(Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up"))
+    Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up")
     Interface.output(States.INFO, "Removing temporary install script")
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
 
