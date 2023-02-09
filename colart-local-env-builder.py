@@ -162,6 +162,7 @@ try:
         Interface.output(States.INFO, "install sh already downloaded")
 
     install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
+    Interface.output(States.INFO, f"install-db.sh location: {install_location}")
 
     Interface.output(States.INFO, "Installing docker scripts")
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
@@ -172,6 +173,7 @@ try:
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
 
     db_directory = f"/mnt/{execution_directory.replace(':','/')}/spectre.sql.gz"
+    Interface.output(States.INFO, f"Database location: {db_directory}")
 
     Interface.output(States.INFO, "Preparing database")
     Interface.system_command(f"wsl mv {db_directory} /tmp/spectre.sql.gz")
