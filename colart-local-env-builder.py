@@ -1,12 +1,9 @@
-"""
+import os
 
-This file contains the interface code for all functionality in cleb
-Do not alter this file unless necessary.
-Running this file will have no effect.
+os.system("pip install docker")
+os.system("pip install colorama")
 
-"""
 
-#Local config
 
 #Package imports
 
@@ -132,3 +129,36 @@ class Interface:
         Interface.output(States.IMPORTANT, "A system restart is required to continue!")
         Interface.output(States.INFO, f"The process is currently on step {Interface.get_config(private=True).get_value('STEP_CODE')}. If you have come across this restart before there may be a problem.")
         sys.exit()
+        
+import docker
+
+Interface.output(States.OK, "Starting...")
+
+Interface.system_command("curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o spectre.sql.gz")
+
+Interface.system_command("wsl git clone git@bitbucket.org:colart/spectre-websites.git")
+Interface.system_command("wsl sudo apt update")
+Interface.system_command("wsl sudo apt install nodejs npm")
+Interface.system_command("wsl cd spectre-websites/;npm install")
+Interface.system_command("wsl sudo apt install gulp")
+Interface.system_command("wsl cd spectre-websites/;gulp install")
+
+execution_directory = os.getcwd()
+install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
+
+Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
+Interface.system_command(f"wsl mv {install_location} spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
+Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up")
+Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
+
+db_directory = f"/mnt/{execution_directory.replace(':','/')}/spectre.sql.gz"
+
+Interface.system_command(f"wsl mv {db_directory} /tmp/spectre.sql.gz")
+Interface.system_command("gzip -d /tmp/spectre.sql.gz")
+
+mariadb_container_id = docker.from_env().containers.get("spectre-mariadb").id
+
+Interface.system_command(f"docker cp /tmp/spectre.sql {mariadb_container_id}:/tmp/spectre.sql")
+Interface.system_command(f"docker exec -it {mariadb_container_id} /usr/bin/mysql --password=rootpassword spectre < /tmp/spectre.sql")
+
+Interface.output(States.OK, "Colart Local Environment Builder finished!")

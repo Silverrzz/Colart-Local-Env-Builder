@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "CREATING DATABASES"
+mysqladmin -u root --password=$MYSQL_ROOT_PASSWORD create spectre
+mysqladmin -u root --password=$MYSQL_ROOT_PASSWORD create b2b
+mysqladmin -u root --password=$MYSQL_ROOT_PASSWORD create intranet
+mysqladmin -u root --password=$MYSQL_ROOT_PASSWORD create elephant
+mysqladmin -u root --password=$MYSQL_ROOT_PASSWORD create liquitexjp
+
+echo "CREATING PERMISSIONS"
+echo "GRANT ALL PRIVILEGES ON spectre.* TO 'spectre'@'%' IDENTIFIED BY 'blofeldlives'" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+echo "GRANT ALL PRIVILEGES ON b2b.* TO 'b2b'@'%' IDENTIFIED BY 'asDSAf9xcvjjlks98dfxcvsfz'" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+echo "GRANT ALL PRIVILEGES ON intranet.* TO 'intranet'@'%' IDENTIFIED BY 'ERsdf8797werjksdjhkhwerjhk'" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+echo "GRANT ALL PRIVILEGES ON elephant.* TO 'elephant'@'%' IDENTIFIED BY 'asDJKasdjklxcjk'" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+echo "GRANT ALL PRIVILEGES ON liquitexjp.* TO 'liquitexjp'@'%' IDENTIFIED BY 'dfsjklXCV8sdjha76x'" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+echo "FLUSH PRIVILEGES" | mysql -u root --password=$MYSQL_ROOT_PASSWORD mysql
+
+echo "Done"
