@@ -173,7 +173,7 @@ try:
 
     Interface.output(States.INFO, "Preparing database")
     Interface.system_command(f"wsl mv {db_directory} /tmp/spectre.sql.gz")
-    Interface.system_command("gzip -d /tmp/spectre.sql.gz")
+    Interface.system_command("wsl gzip -d /tmp/spectre.sql.gz")
 
     mariadb_container_id = docker.from_env().containers.get("spectre-mariadb").id
 
