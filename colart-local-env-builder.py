@@ -132,42 +132,52 @@ class Interface:
         
 import docker
 
-execution_directory = os.getcwd()
+try:
 
-Interface.output(States.OK, "Starting...")
+    execution_directory = os.getcwd()
 
-Interface.output(States.INFO, "Downloading database")
-Interface.system_command(f"curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o {execution_directory}/spectre.sql.gz")
+    Interface.output(States.OK, "Starting...")
 
-Interface.output(States.INFO, "Cloning repository")
-Interface.system_command("wsl git clone git@bitbucket.org:colart/spectre-websites.git")
-Interface.output(States.INFO, "Installing dependencies")
-Interface.system_command("wsl sudo apt update")
-Interface.system_command("wsl sudo apt install nodejs npm")
-Interface.system_command("wsl cd spectre-websites/;npm install")
-Interface.system_command("wsl sudo apt install gulp")
-Interface.output(States.INFO, "Building local website files")
-Interface.system_command("wsl cd spectre-websites/;gulp install")
+    if "spectre.sql.gz" not in os.listdir(execution_directory):
+        Interface.output(States.INFO, "Downloading database")
+        Interface.system_command(f"curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o {execution_directory}/spectre.sql.gz")
+    else:
+        Interface.output(States.INFO, "Database already downloaded")
 
-install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
+    Interface.output(States.INFO, "Cloning repository")
+    Interface.system_command("wsl git clone git@bitbucket.org:colart/spectre-websites.git")
+    Interface.output(States.INFO, "Installing dependencies")
+    Interface.system_command("wsl sudo apt update")
+    Interface.system_command("wsl sudo apt install nodejs npm")
+    Interface.system_command("wsl cd spectre-websites/;npm install")
+    Interface.system_command("wsl sudo apt install gulp")
+    Interface.output(States.INFO, "Building local website files")
+    Interface.system_command("wsl cd spectre-websites/;gulp install")
 
-Interface.output(States.INFO, "Installing docker scripts")
-Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
-Interface.system_command(f"wsl mv {install_location} spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
-Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up")
-Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
+    install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
 
-db_directory = f"/mnt/{execution_directory.replace(':','/')}/spectre.sql.gz"
+    Interface.output(States.INFO, "Installing docker scripts")
+    Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
+    Interface.system_command(f"wsl mv {install_location} spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
+    Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up")
+    Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
 
-Interface.output(States.INFO, "Preparing database")
-Interface.system_command(f"wsl mv {db_directory} /tmp/spectre.sql.gz")
-Interface.system_command("gzip -d /tmp/spectre.sql.gz")
+    db_directory = f"/mnt/{execution_directory.replace(':','/')}/spectre.sql.gz"
 
-mariadb_container_id = docker.from_env().containers.get("spectre-mariadb").id
+    Interface.output(States.INFO, "Preparing database")
+    Interface.system_command(f"wsl mv {db_directory} /tmp/spectre.sql.gz")
+    Interface.system_command("gzip -d /tmp/spectre.sql.gz")
 
-Interface.system_command(f"docker cp /tmp/spectre.sql {mariadb_container_id}:/tmp/spectre.sql")
+    mariadb_container_id = docker.from_env().containers.get("spectre-mariadb").id
 
-Interface.output(States.INFO, "Installing database")
-Interface.system_command(f"docker exec -it {mariadb_container_id} /usr/bin/mysql --password=rootpassword spectre < /tmp/spectre.sql")
+    Interface.system_command(f"docker cp /tmp/spectre.sql {mariadb_container_id}:/tmp/spectre.sql")
 
-Interface.output(States.OK, "Colart Local Environment Builder finished!")
+    Interface.output(States.INFO, "Installing database")
+    Interface.system_command(f"docker exec -it {mariadb_container_id} /usr/bin/mysql --password=rootpassword spectre < /tmp/spectre.sql")
+
+    Interface.output(States.OK, "Colart Local Environment Builder finished!")
+
+except Exception as e:
+    Interface.output(States.FATAL, f"An error occurred: {e}")
+
+Interface.output(States.IMPORTANT, "A system restart is required to continue!")
