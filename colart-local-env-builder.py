@@ -132,9 +132,11 @@ class Interface:
         
 import docker
 
+execution_directory = os.getcwd()
+
 Interface.output(States.OK, "Starting...")
 
-Interface.system_command("curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o spectre.sql.gz")
+Interface.system_command(f"curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o {execution_directory}/spectre.sql.gz")
 
 Interface.system_command("wsl git clone git@bitbucket.org:colart/spectre-websites.git")
 Interface.system_command("wsl sudo apt update")
@@ -143,7 +145,6 @@ Interface.system_command("wsl cd spectre-websites/;npm install")
 Interface.system_command("wsl sudo apt install gulp")
 Interface.system_command("wsl cd spectre-websites/;gulp install")
 
-execution_directory = os.getcwd()
 install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
 
 Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
