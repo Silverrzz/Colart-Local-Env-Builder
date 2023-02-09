@@ -138,6 +138,8 @@ try:
 
     Interface.output(States.OK, "Starting...")
 
+    Interface.system_command("wsl pwd")
+
     if "spectre.sql.gz" not in os.listdir(execution_directory):
         Interface.output(States.INFO, "Downloading database")
         Interface.system_command(f"curl https://download852.mediafire.com/8x9i9nkxna3g/n0ok8pz6o7dch5l/spectre.sql.gz -o {execution_directory}/spectre.sql.gz")
