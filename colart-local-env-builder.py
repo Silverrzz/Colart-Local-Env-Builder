@@ -166,7 +166,9 @@ try:
     Interface.output(States.INFO, "Installing docker scripts")
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db")
     Interface.system_command(f"wsl mv {install_location} spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
-    Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up")
+    Interface.output(States.INFO, "Creating docker containers")
+    print(Interface.system_command("wsl cd spectre-websites/infrastructure/docker-local;docker compose up"))
+    Interface.output(States.INFO, "Removing temporary install script")
     Interface.system_command("wsl mv spectre-websites/infrastructure/docker-local/docker/mariadb/temp-install-db spectre-websites/infrastructure/docker-local/docker/mariadb/install-db.sh")
 
     db_directory = f"/mnt/{execution_directory.replace(':','/')}/spectre.sql.gz"
