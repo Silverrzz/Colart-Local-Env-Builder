@@ -148,6 +148,7 @@ try:
     Interface.system_command("wsl git clone git@bitbucket.org:colart/spectre-websites.git")
     Interface.output(States.INFO, "Installing dependencies")
     Interface.system_command("wsl sudo apt update")
+    Interface.system_command("wsl sudo apt install gzip")
     Interface.system_command("wsl sudo apt install nodejs npm")
     Interface.system_command("wsl cd spectre-websites/;npm install")
     Interface.system_command("wsl sudo apt install gulp")
