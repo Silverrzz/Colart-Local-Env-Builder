@@ -177,6 +177,8 @@ try:
 
     Interface.output(States.OK, "Colart Local Environment Builder finished!")
 
+    input("Press enter to continue...")
+
 except Exception as e:
     Interface.output(States.FATAL, f"An error occurred: {e}")
 
