@@ -116,6 +116,9 @@ class Interface:
         return True
 
     def system_command(cmd):
+        #replace \ in cmd with /
+        cmd = cmd.replace("\\", "/")
+        cmd = cmd.replace("wsl ", "wsl cd wsl$; ")
         result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         print(result.stdout.read().decode("utf-8")), result.returncode
 
