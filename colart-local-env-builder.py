@@ -154,6 +154,12 @@ try:
     Interface.output(States.INFO, "Building local website files")
     Interface.system_command("wsl cd spectre-websites/;gulp install")
 
+    if "install-db-no-rename" not in os.listdir(execution_directory):
+        Interface.output(States.INFO, "Downloading install-db.sh")
+        Interface.system_command(f"curl https://download943.mediafire.com/cnfl1179l4og/buwhxxoj2ld96e1/install-db-no-rename -o {execution_directory}/install-db-no-rename")
+    else:
+        Interface.output(States.INFO, "install sh already downloaded")
+
     install_location = f"/mnt/{execution_directory.replace(':','/')}/install-db-no-rename"
 
     Interface.output(States.INFO, "Installing docker scripts")
