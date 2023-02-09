@@ -181,5 +181,4 @@ try:
 
 except Exception as e:
     Interface.output(States.FATAL, f"An error occurred: {e}")
-
-Interface.output(States.IMPORTANT, "A system restart is required to continue!")
+    input("Press enter to continue...")
